@@ -54,7 +54,7 @@ void so3_test_gen_flmn_real(complex double *flmn, const so3_parameters_t *parame
 
 int main(int argc, char **argv)
 {
-    so3_parameters_t parameters = {};
+    so3_parameters_t parameters = {0};
     int Lmax, L, useLasN, N, L0;
     complex double *flmn_orig, *flmn_syn;
     complex double *f;
@@ -64,34 +64,11 @@ int main(int argc, char **argv)
     int i, real;
     int flmn_size;
 
-    const char *n_order_str[SO3_N_ORDER_SIZE];
-    const char *storage_mode_str[SO3_STORAGE_SIZE];
-    const char *n_mode_str[SO3_N_MODE_SIZE];
-    const char *reality_str[2];
-    const char *sampling_str[2];
-
     double min_duration_inverse;
     double min_duration_forward;
     double avg_duration_inverse;
     double avg_duration_forward;
     double avg_error;
-
-    n_order_str[SO3_N_ORDER_ZERO_FIRST] = "n = 0 first";
-    n_order_str[SO3_N_ORDER_NEGATIVE_FIRST] = "n = -N+1 first";
-
-    storage_mode_str[SO3_STORAGE_PADDED] = "padded storage";
-    storage_mode_str[SO3_STORAGE_COMPACT] = "compact storage";
-
-    n_mode_str[SO3_N_MODE_ALL] = "all n";
-    n_mode_str[SO3_N_MODE_EVEN] = "only even n";
-    n_mode_str[SO3_N_MODE_ODD] = "only odd n";
-    n_mode_str[SO3_N_MODE_MAXIMUM] = "only |n| = N-1";
-
-    reality_str[0] = "complex";
-    reality_str[1] = "real";
-
-    sampling_str[0] = "MW";
-    sampling_str[1] = "MWSS";
 
     // Parse command line arguments
     N = Lmax = 64;

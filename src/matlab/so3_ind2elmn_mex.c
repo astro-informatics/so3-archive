@@ -27,7 +27,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     char order[SO3_STRING_LEN], storage[SO3_STRING_LEN];
     int reality;
 
-    so3_parameters_t parameters = {};
+    so3_parameters_t parameters = {0};
 
     /* Check number of arguments */
     if (nrhs != 6)

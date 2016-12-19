@@ -37,7 +37,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     ssht_dl_method_t dl_method;
     so3_sampling_t sampling_scheme;
 
-    so3_parameters_t parameters = {};
+    so3_parameters_t parameters = {0};
 
     int reality;
 
