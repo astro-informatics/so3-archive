@@ -22,6 +22,7 @@
 #include "so3_types.h"
 #include "so3_error.h"
 #include "so3_sampling.h"
+#include "so3_core.h"
 
 #define MIN(a,b) ((a < b) ? (a) : (b))
 #define MAX(a,b) ((a > b) ? (a) : (b))
@@ -954,23 +955,19 @@ void so3_core_inverse_direct(
 ) {
 
     int L0, L, N;
-    so3_sampling_t sampling;
     so3_storage_t storage;
     so3_n_mode_t n_mode;
     ssht_dl_method_t dl_method;
-    int steerable;
     int verbosity;
 
     L0 = parameters->L0;
     L = parameters->L;
     N = parameters->N;
-    sampling = parameters->sampling_scheme;
     storage = parameters->storage;
     // TODO: Add optimisations for all n-modes.
     n_mode = parameters->n_mode;
     dl_method = parameters->dl_method;
     verbosity = parameters->verbosity;
-    steerable = parameters->steerable;
 
     // Print messages depending on verbosity level.
     if (verbosity > 0)
@@ -993,7 +990,7 @@ void so3_core_inverse_direct(
     SO3_ERROR_MEM_ALLOC_CHECK(signs);
     complex double *exps = calloc(4, sizeof(*exps));
     SO3_ERROR_MEM_ALLOC_CHECK(exps);
-  
+
     // Perform precomputations.
     for (el = 0; el <= 2*L-1; ++el)
         sqrt_tbl[el] = sqrt((double)el);
@@ -1046,16 +1043,16 @@ void so3_core_inverse_direct(
         switch (dl_method)
         {
         case SSHT_DL_RISBO:
-            if (el != 0 && el == L0) 
+            if (el != 0 && el == L0)
             {
                 for(eltmp = 0; eltmp <= L0; ++eltmp)
                     ssht_dl_beta_risbo_eighth_table(
-                            dl8, 
-                            SO3_PION2, 
+                            dl8,
+                            SO3_PION2,
                             L,
                             SSHT_DL_QUARTER_EXTENDED,
-                            eltmp, 
-                            sqrt_tbl, 
+                            eltmp,
+                            sqrt_tbl,
                             signs);
                 ssht_dl_beta_risbo_fill_eighth2quarter_table(dl,
                         dl8, L,
@@ -1063,16 +1060,16 @@ void so3_core_inverse_direct(
                         SSHT_DL_QUARTER_EXTENDED,
                         el,
                         signs);
-            } 
-            else 
+            }
+            else
             {
                 ssht_dl_beta_risbo_eighth_table(
-                        dl8, 
-                        SO3_PION2, 
+                        dl8,
+                        SO3_PION2,
                         L,
                         SSHT_DL_QUARTER_EXTENDED,
-                        el, 
-                        sqrt_tbl, 
+                        el,
+                        sqrt_tbl,
                         signs);
                 ssht_dl_beta_risbo_fill_eighth2quarter_table(
                         dl,
@@ -1085,35 +1082,35 @@ void so3_core_inverse_direct(
             break;
 
         case SSHT_DL_TRAPANI:
-            if (el != 0 && el == L0) 
+            if (el != 0 && el == L0)
             {
                 for(eltmp = 0; eltmp <= L0; ++eltmp)
                     ssht_dl_halfpi_trapani_eighth_table(
-                            dl, 
+                            dl,
                             L,
                             SSHT_DL_QUARTER,
-                            eltmp, 
+                            eltmp,
                             sqrt_tbl);
                 ssht_dl_halfpi_trapani_fill_eighth2quarter_table(
-                        dl, 
+                        dl,
                         L,
                         SSHT_DL_QUARTER,
-                        el, 
+                        el,
                         signs);
             }
             else
             {
                 ssht_dl_halfpi_trapani_eighth_table(
-                        dl, 
+                        dl,
                         L,
                         SSHT_DL_QUARTER,
-                        el, 
+                        el,
                         sqrt_tbl);
                 ssht_dl_halfpi_trapani_fill_eighth2quarter_table(
-                        dl, 
+                        dl,
                         L,
                         SSHT_DL_QUARTER,
-                        el, 
+                        el,
                         signs);
             }
             break;
@@ -1196,7 +1193,7 @@ void so3_core_inverse_direct(
                     Fmnm[m + m_offset + m_stride*(
                          n + n_offset + n_stride*(
                          mm + mm_offset))] +=
-                        elnmm_factor 
+                        elnmm_factor
                         * mn_factors[m + m_offset + m_stride*(
                                      n + n_offset)]
                         * elmmsign * dl[-m + dl_offset + mm*dl_stride];
@@ -1204,7 +1201,7 @@ void so3_core_inverse_direct(
                     Fmnm[m + m_offset + m_stride*(
                          n + n_offset + n_stride*(
                          mm + mm_offset))] +=
-                        elnmm_factor 
+                        elnmm_factor
                         * mn_factors[m + m_offset + m_stride*(
                                      n + n_offset)]
                         * dl[m + dl_offset + mm*dl_stride];
@@ -1274,9 +1271,9 @@ void so3_core_inverse_direct(
 
     // Set up plan before initialising array.
     fftw_plan plan = fftw_plan_dft_3d(
-                        2*N-1, 2*L-1, 2*L-1, 
+                        2*N-1, 2*L-1, 2*L-1,
                         fext, fext,
-                        FFTW_BACKWARD, 
+                        FFTW_BACKWARD,
                         FFTW_ESTIMATE);
 
     // Apply spatial shift.
@@ -1356,23 +1353,19 @@ void so3_core_forward_direct(
     const so3_parameters_t *parameters
 ) {
     int L0, L, N;
-    so3_sampling_t sampling;
     so3_storage_t storage;
     so3_n_mode_t n_mode;
     ssht_dl_method_t dl_method;
-    int steerable;
     int verbosity;
 
     L0 = parameters->L0;
     L = parameters->L;
     N = parameters->N;
-    sampling = parameters->sampling_scheme;
     storage = parameters->storage;
     // TODO: Add optimisations for all n-modes.
     n_mode = parameters->n_mode;
     dl_method = parameters->dl_method;
     verbosity = parameters->verbosity;
-    steerable = parameters->steerable;
 
     // Print messages depending on verbosity level.
     if (verbosity > 0) {
@@ -1457,8 +1450,8 @@ void so3_core_forward_direct(
     SO3_ERROR_MEM_ALLOC_CHECK(inout);
     fftw_plan plan = fftw_plan_dft_2d(
                         2*N-1, 2*L-1,
-                        inout, inout, 
-                        FFTW_FORWARD, 
+                        inout, inout,
+                        FFTW_FORWARD,
                         FFTW_ESTIMATE);
 
     int b, g;
@@ -1469,10 +1462,10 @@ void so3_core_forward_direct(
         // over the 1st and 3rd dimensions of f.
         for (g = 0; g < 2*N-1; ++g)
             memcpy(
-                inout + g*a_stride, 
+                inout + g*a_stride,
                 f + 0 + a_stride*(
                     b + b_stride*(
-                    g)), 
+                    g)),
                 a_stride*sizeof(*f));
         fftw_execute_dft(plan, inout, inout);
 
@@ -1515,16 +1508,16 @@ void so3_core_forward_direct(
 
     plan = fftw_plan_dft_1d(
             2*L-1,
-            inout, inout, 
-            FFTW_FORWARD, 
+            inout, inout,
+            FFTW_FORWARD,
             FFTW_ESTIMATE);
     for (n = n_start; n <= n_stop; n += n_inc)
         for (m = -L+1; m <= L-1; ++m)
         {
-            memcpy(inout, 
+            memcpy(inout,
                    Fmnb + 0 + bext_stride*(
                           m + m_offset + m_stride*(
-                          n + n_offset)), 
+                          n + n_offset)),
                    bext_stride*sizeof(*Fmnb));
             fftw_execute_dft(plan, inout, inout);
 
@@ -1563,15 +1556,15 @@ void so3_core_forward_direct(
     inout = calloc(4*L-3, sizeof(*inout));
     SO3_ERROR_MEM_ALLOC_CHECK(inout);
     fftw_plan plan_bwd = fftw_plan_dft_1d(
-                            4*L-3, 
-                            inout, inout, 
-                            FFTW_BACKWARD, 
+                            4*L-3,
+                            inout, inout,
+                            FFTW_BACKWARD,
                             FFTW_MEASURE);
     fftw_plan plan_fwd = fftw_plan_dft_1d(
-                            4*L-3, 
-                            inout, 
-                            inout, 
-                            FFTW_FORWARD, 
+                            4*L-3,
+                            inout,
+                            inout,
+                            FFTW_FORWARD,
                             FFTW_MEASURE);
 
     // Apply spatial shift.
@@ -1607,7 +1600,7 @@ void so3_core_forward_direct(
                     Fmnm[mm + mm_offset + mm_stride*(
                          m + m_offset + m_stride*(
                          n + n_offset))];
-        
+
             // Apply spatial shift.
             for (mm = 1; mm <= 2*L-2; ++mm)
                 inout[mm + w_offset] = Fmnm_pad[mm - 2*(L-1) - 1 + w_offset];
@@ -1620,12 +1613,12 @@ void so3_core_forward_direct(
                 Fmnm_pad[mm + w_offset] = inout[mm - 2*(L-1) + w_offset];
             for (mm = -2*(L-1); mm <= -1; ++mm)
                 Fmnm_pad[mm + w_offset] = inout[mm + 2*(L-1) + 1 + w_offset];
-        
+
             // Compute product of Fmnm' and weight in real space.
             int r;
             for (r = -2*(L-1); r <= 2*(L-1); ++r)
                 Fmnm_pad[r + w_offset] *= wr[r + w_offset];
-        
+
             // Apply spatial shift.
             for (mm = 1; mm <= 2*L-2; ++mm)
                 inout[mm + w_offset] = Fmnm_pad[mm - 2*(L-1) - 1 + w_offset];
@@ -1638,15 +1631,15 @@ void so3_core_forward_direct(
                 Fmnm_pad[mm + w_offset] = inout[mm - 2*(L-1) + w_offset];
             for (mm = -2*(L-1); mm <= -1; ++mm)
                 Fmnm_pad[mm + w_offset] = inout[mm + 2*(L-1) + 1 + w_offset];
-        
+
             // Extract section of Gmnm' of interest.
             for (mm = -(L-1); mm <= L-1; ++mm)
                 Gmnm[m + m_offset + m_stride*(
                      mm + mm_offset + mm_stride*(
                      n + n_offset))] =
-                    Fmnm_pad[mm + w_offset] 
+                    Fmnm_pad[mm + w_offset]
                     * 4.0 * SSHT_PI * SSHT_PI / (4.0*L-3.0);
-        
+
         }
     fftw_destroy_plan(plan_bwd);
     fftw_destroy_plan(plan_fwd);
@@ -1772,7 +1765,7 @@ void so3_core_forward_direct(
         default:
             SO3_ERROR_GENERIC("Invalid n-mode.");
         }
-    
+
         // TODO: Pull out a few multiplications into precomputations
         // or split up loops to avoid conditionals to check signs.
         for (mm = -el; mm <= el; ++mm)
@@ -1785,11 +1778,11 @@ void so3_core_forward_direct(
             {
                 double mmsign = mm >= 0 ? 1.0 : signs[el] * signs[abs(n)];
                 double elnsign = n >= 0 ? 1.0 : elmmsign;
-                 
+
                 // Factor which does not depend on m.
                 double elnmm_factor = mmsign * elnsign
                                       * dl[abs(n) + dl_offset + abs(mm)*dl_stride];
-                
+
                 for (m = -el; m <= el; ++m)
                 {
                     mmsign = mm >= 0 ? 1.0 : signs[el] * signs[abs(m)];
@@ -1797,7 +1790,7 @@ void so3_core_forward_direct(
                     int ind;
                     so3_sampling_elmn2ind(&ind, el, m, n, parameters);
                     int mod = ((m-n)%4 + 4)%4;
-                    flmn[ind] += 
+                    flmn[ind] +=
                         exps[mod]
                         * elnmm_factor
                         * mmsign * elmsign
@@ -1853,23 +1846,19 @@ void so3_core_inverse_direct_real(
 ) {
 
     int L0, L, N;
-    so3_sampling_t sampling;
     so3_storage_t storage;
     so3_n_mode_t n_mode;
     ssht_dl_method_t dl_method;
-    int steerable;
     int verbosity;
 
     L0 = parameters->L0;
     L = parameters->L;
     N = parameters->N;
-    sampling = parameters->sampling_scheme;
     storage = parameters->storage;
     // TODO: Add optimisations for all n-modes.
     n_mode = parameters->n_mode;
     dl_method = parameters->dl_method;
     verbosity = parameters->verbosity;
-    steerable = parameters->steerable;
 
     // Print messages depending on verbosity level.
     if (verbosity > 0)
@@ -1892,7 +1881,7 @@ void so3_core_inverse_direct_real(
     SO3_ERROR_MEM_ALLOC_CHECK(signs);
     complex double *exps = calloc(4, sizeof(*exps));
     SO3_ERROR_MEM_ALLOC_CHECK(exps);
-  
+
     // Perform precomputations.
     for (el = 0; el <= 2*L-1; ++el)
         sqrt_tbl[el] = sqrt((double)el);
@@ -1945,16 +1934,16 @@ void so3_core_inverse_direct_real(
         switch (dl_method)
         {
         case SSHT_DL_RISBO:
-            if (el != 0 && el == L0) 
+            if (el != 0 && el == L0)
             {
                 for(eltmp = 0; eltmp <= L0; ++eltmp)
                     ssht_dl_beta_risbo_eighth_table(
-                            dl8, 
-                            SO3_PION2, 
+                            dl8,
+                            SO3_PION2,
                             L,
                             SSHT_DL_QUARTER_EXTENDED,
-                            eltmp, 
-                            sqrt_tbl, 
+                            eltmp,
+                            sqrt_tbl,
                             signs);
                 ssht_dl_beta_risbo_fill_eighth2quarter_table(dl,
                         dl8, L,
@@ -1962,16 +1951,16 @@ void so3_core_inverse_direct_real(
                         SSHT_DL_QUARTER_EXTENDED,
                         el,
                         signs);
-            } 
-            else 
+            }
+            else
             {
                 ssht_dl_beta_risbo_eighth_table(
-                        dl8, 
-                        SO3_PION2, 
+                        dl8,
+                        SO3_PION2,
                         L,
                         SSHT_DL_QUARTER_EXTENDED,
-                        el, 
-                        sqrt_tbl, 
+                        el,
+                        sqrt_tbl,
                         signs);
                 ssht_dl_beta_risbo_fill_eighth2quarter_table(
                         dl,
@@ -1984,35 +1973,35 @@ void so3_core_inverse_direct_real(
             break;
 
         case SSHT_DL_TRAPANI:
-            if (el != 0 && el == L0) 
+            if (el != 0 && el == L0)
             {
                 for(eltmp = 0; eltmp <= L0; ++eltmp)
                     ssht_dl_halfpi_trapani_eighth_table(
-                            dl, 
+                            dl,
                             L,
                             SSHT_DL_QUARTER,
-                            eltmp, 
+                            eltmp,
                             sqrt_tbl);
                 ssht_dl_halfpi_trapani_fill_eighth2quarter_table(
-                        dl, 
+                        dl,
                         L,
                         SSHT_DL_QUARTER,
-                        el, 
+                        el,
                         signs);
             }
             else
             {
                 ssht_dl_halfpi_trapani_eighth_table(
-                        dl, 
+                        dl,
                         L,
                         SSHT_DL_QUARTER,
-                        el, 
+                        el,
                         sqrt_tbl);
                 ssht_dl_halfpi_trapani_fill_eighth2quarter_table(
-                        dl, 
+                        dl,
                         L,
                         SSHT_DL_QUARTER,
-                        el, 
+                        el,
                         signs);
             }
             break;
@@ -2091,7 +2080,7 @@ void so3_core_inverse_direct_real(
                     Fmnm[m + m_offset + m_stride*(
                          n + n_offset + n_stride*(
                          mm + mm_offset))] +=
-                        elnmm_factor 
+                        elnmm_factor
                         * mn_factors[m + m_offset + m_stride*(
                                      n + n_offset)]
                         * elmmsign * dl[-m + dl_offset + mm*dl_stride];
@@ -2099,7 +2088,7 @@ void so3_core_inverse_direct_real(
                     Fmnm[m + m_offset + m_stride*(
                          n + n_offset + n_stride*(
                          mm + mm_offset))] +=
-                        elnmm_factor 
+                        elnmm_factor
                         * mn_factors[m + m_offset + m_stride*(
                                      n + n_offset)]
                         * dl[m + dl_offset + mm*dl_stride];
@@ -2257,23 +2246,19 @@ void so3_core_forward_direct_real(
     const so3_parameters_t *parameters
 ) {
     int L0, L, N;
-    so3_sampling_t sampling;
     so3_storage_t storage;
     so3_n_mode_t n_mode;
     ssht_dl_method_t dl_method;
-    int steerable;
     int verbosity;
 
     L0 = parameters->L0;
     L = parameters->L;
     N = parameters->N;
-    sampling = parameters->sampling_scheme;
     storage = parameters->storage;
     // TODO: Add optimisations for all n-modes.
     n_mode = parameters->n_mode;
     dl_method = parameters->dl_method;
     verbosity = parameters->verbosity;
-    steerable = parameters->steerable;
 
     // Print messages depending on verbosity level.
     if (verbosity > 0) {
@@ -2423,19 +2408,19 @@ void so3_core_forward_direct_real(
     SO3_ERROR_MEM_ALLOC_CHECK(Fmnm);
     complex double *inout = calloc(2*L-1, sizeof(*inout));
     SO3_ERROR_MEM_ALLOC_CHECK(inout);
-    
+
     plan = fftw_plan_dft_1d(
             2*L-1,
-            inout, inout, 
-            FFTW_FORWARD, 
+            inout, inout,
+            FFTW_FORWARD,
             FFTW_ESTIMATE);
     for (n = n_start; n <= n_stop; n += n_inc)
         for (m = -L+1; m <= L-1; ++m)
         {
-            memcpy(inout, 
+            memcpy(inout,
                    Fmnb + 0 + bext_stride*(
                           m + m_offset + m_stride*(
-                          n + n_offset)), 
+                          n + n_offset)),
                    bext_stride*sizeof(*Fmnb));
             fftw_execute(plan);
 
@@ -2474,15 +2459,15 @@ void so3_core_forward_direct_real(
     inout = calloc(4*L-3, sizeof(*inout));
     SO3_ERROR_MEM_ALLOC_CHECK(inout);
     fftw_plan plan_bwd = fftw_plan_dft_1d(
-                            4*L-3, 
-                            inout, inout, 
-                            FFTW_BACKWARD, 
+                            4*L-3,
+                            inout, inout,
+                            FFTW_BACKWARD,
                             FFTW_MEASURE);
     fftw_plan plan_fwd = fftw_plan_dft_1d(
-                            4*L-3, 
-                            inout, 
-                            inout, 
-                            FFTW_FORWARD, 
+                            4*L-3,
+                            inout,
+                            inout,
+                            FFTW_FORWARD,
                             FFTW_MEASURE);
 
     // Apply spatial shift.
@@ -2518,7 +2503,7 @@ void so3_core_forward_direct_real(
                     Fmnm[mm + mm_offset + mm_stride*(
                          m + m_offset + m_stride*(
                          n + n_offset))];
-        
+
             // Apply spatial shift.
             for (mm = 1; mm <= 2*L-2; ++mm)
                 inout[mm + w_offset] = Fmnm_pad[mm - 2*(L-1) - 1 + w_offset];
@@ -2531,12 +2516,12 @@ void so3_core_forward_direct_real(
                 Fmnm_pad[mm + w_offset] = inout[mm - 2*(L-1) + w_offset];
             for (mm = -2*(L-1); mm <= -1; ++mm)
                 Fmnm_pad[mm + w_offset] = inout[mm + 2*(L-1) + 1 + w_offset];
-        
+
             // Compute product of Fmnm' and weight in real space.
             int r;
             for (r = -2*(L-1); r <= 2*(L-1); ++r)
                 Fmnm_pad[r + w_offset] *= wr[r + w_offset];
-        
+
             // Apply spatial shift.
             for (mm = 1; mm <= 2*L-2; ++mm)
                 inout[mm + w_offset] = Fmnm_pad[mm - 2*(L-1) - 1 + w_offset];
@@ -2549,15 +2534,15 @@ void so3_core_forward_direct_real(
                 Fmnm_pad[mm + w_offset] = inout[mm - 2*(L-1) + w_offset];
             for (mm = -2*(L-1); mm <= -1; ++mm)
                 Fmnm_pad[mm + w_offset] = inout[mm + 2*(L-1) + 1 + w_offset];
-        
+
             // Extract section of Gmnm' of interest.
             for (mm = -(L-1); mm <= L-1; ++mm)
                 Gmnm[m + m_offset + m_stride*(
                      mm + mm_offset + mm_stride*(
                      n + n_offset))] =
-                    Fmnm_pad[mm + w_offset] 
+                    Fmnm_pad[mm + w_offset]
                     * 4.0 * SSHT_PI * SSHT_PI / (4.0*L-3.0);
-        
+
         }
     fftw_destroy_plan(plan_bwd);
     fftw_destroy_plan(plan_fwd);
@@ -2682,7 +2667,7 @@ void so3_core_forward_direct_real(
         default:
             SO3_ERROR_GENERIC("Invalid n-mode.");
         }
-    
+
         // TODO: Pull out a few multiplications into precomputations
         // or split up loops to avoid conditionals to check signs.
         for (mm = -el; mm <= el; ++mm)
@@ -2694,11 +2679,11 @@ void so3_core_forward_direct_real(
             for (n = n_start; n <= n_stop; n += n_inc)
             {
                 double mmsign = mm >= 0 ? 1.0 : signs[el] * signs[n];
-                 
+
                 // Factor which does not depend on m.
                 double elnmm_factor = mmsign
                                       * dl[n + dl_offset + abs(mm)*dl_stride];
-                
+
                 for (m = -el; m <= el; ++m)
                 {
                     mmsign = mm >= 0 ? 1.0 : signs[el] * signs[abs(m)];
@@ -2706,7 +2691,7 @@ void so3_core_forward_direct_real(
                     int ind;
                     so3_sampling_elmn2ind_real(&ind, el, m, n, parameters);
                     int mod = ((m-n)%4 + 4)%4;
-                    flmn[ind] += 
+                    flmn[ind] +=
                         exps[mod]
                         * elnmm_factor
                         * mmsign * elmsign

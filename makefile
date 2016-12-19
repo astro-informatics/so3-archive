@@ -2,7 +2,7 @@
 
 CC	= gcc
 #OPT	= -Wall -O3 -fopenmp -DSO3_VERSION=\"0.1\" -DSO3_BUILD=\"`git rev-parse HEAD`\"
-OPT	= -Wall -g -fopenmp -DSO3_VERSION=\"1.1b1\" -DSO3_BUILD=\"`git rev-parse HEAD`\"
+OPT	= -std=c99 -pedantic -W -Wall -Wmissing-prototypes -Wstrict-prototypes -g -fopenmp -O3 -DSO3_VERSION=\"1.1b1\" -DSO3_BUILD=\"`git rev-parse HEAD`\"
 
 
 # ======== LINKS ========

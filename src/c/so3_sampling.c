@@ -7,6 +7,7 @@
 #include <math.h>
 #include "so3_error.h"
 #include "so3_types.h"
+#include "so3_sampling.h"
 
 int so3_sampling_nalpha(const so3_parameters_t *);
 int so3_sampling_nbeta(const so3_parameters_t *);
@@ -28,7 +29,7 @@ int so3_sampling_ngamma(const so3_parameters_t *);
  * \author <a href="http://www.jasonmcewen.org">Jason McEwen</a>
  */
 complex double so3_sampling_weight(
-    const so3_parameters_t *parameters, 
+    const so3_parameters_t *parameters,
     int p)
 {
     switch (parameters->sampling_scheme)
@@ -77,10 +78,6 @@ complex double so3_sampling_weight(
  */
 int so3_sampling_f_size(const so3_parameters_t *parameters)
 {
-    int L, N;
-    L = parameters->L;
-    N = parameters->N;
-
     return so3_sampling_nalpha(parameters) *
            so3_sampling_nbeta(parameters) *
            so3_sampling_ngamma(parameters);
@@ -109,9 +106,8 @@ int so3_sampling_f_size(const so3_parameters_t *parameters)
  */
 int so3_sampling_n(const so3_parameters_t *parameters)
 {
-    int L, N;
+    int L;
     L = parameters->L;
-    N = parameters->N;
 
     // Are these actually correct?
     switch (parameters->sampling_scheme)

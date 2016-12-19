@@ -5,12 +5,12 @@
 #include "../so3_types.h"
 #include "../so3_sampling.h"
 
-static void test_sampling_elmn2ind();
-static void test_sampling_ind2elmn();
-static void test_sampling_elmn2ind_real();
-static void test_sampling_ind2elmn_real();
+static void test_sampling_elmn2ind(void);
+static void test_sampling_ind2elmn(void);
+static void test_sampling_elmn2ind_real(void);
+static void test_sampling_ind2elmn_real(void);
 
-int main() {
+int main(void) {
     test_sampling_elmn2ind();
     test_sampling_ind2elmn();
     test_sampling_elmn2ind_real();
@@ -19,9 +19,9 @@ int main() {
     return 0;
 }
 
-void test_sampling_elmn2ind()
+static void test_sampling_elmn2ind()
 {
-    so3_parameters_t parameters = {};
+    so3_parameters_t parameters = {0};
     int ind;
 
     // Test padded storage with n-order 0, -1, 1, -2, 2, ...
@@ -177,9 +177,9 @@ void test_sampling_elmn2ind()
             "Element (2,1,2) in wrong position for L = N = 3." );
 }
 
-void test_sampling_ind2elmn()
+static void test_sampling_ind2elmn()
 {
-    so3_parameters_t parameters = {};
+    so3_parameters_t parameters = {0};
     int el, m, n;
 
     // Test padded storage with n-order 0, -1, 1, -2, 2, ...
@@ -335,9 +335,9 @@ void test_sampling_ind2elmn()
             "Index 33 yields wrong indices (el,m,n)." );
 }
 
-void test_sampling_elmn2ind_real()
+static void test_sampling_elmn2ind_real()
 {
-    so3_parameters_t parameters = {};
+    so3_parameters_t parameters = {0};
     int ind;
 
     // Test padded storage for a real signal (n-order 0, 1, 2, ...)
@@ -396,9 +396,9 @@ void test_sampling_elmn2ind_real()
             "Element (2,1,2) in wrong position for L = 3." );
 }
 
-void test_sampling_ind2elmn_real()
+static void test_sampling_ind2elmn_real()
 {
-    so3_parameters_t parameters = {};
+    so3_parameters_t parameters = {0};
     int el, m, n;
 
     // Test padded storage for a real signal (n-order 0, 1, 2, ...)

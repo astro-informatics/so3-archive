@@ -44,7 +44,7 @@ void so3_test_gen_flmn_real(complex double *flmn, const so3_parameters_t *parame
 
 int main(int argc, char **argv)
 {
-    so3_parameters_t parameters = {};
+    so3_parameters_t parameters = {0};
     int L, N, L0;
     complex double *flmn_orig, *flmn_syn;
     complex double *f;
